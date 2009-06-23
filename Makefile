@@ -9,10 +9,10 @@ ROOTCFLAGS    = $(shell $(ROOTSYS)/bin/root-config --cflags)
 ROOTLIBS      = $(shell $(ROOTSYS)/bin/root-config --libs)
 ROOTGLIBS     = $(shell $(ROOTSYS)/bin/root-config --glibs)
 
-ifdef ($(SCRAM_ARCH))
-  CXX         = $(shell scramv1 tool info cxxcompiler | grep CXX= | sed s/CXX=//)
-else
+ifeq ($(SCRAM_ARCH),"")
   CXX         = c++
+else
+  CXX         = $(shell scramv1 tool info cxxcompiler | grep CXX= | sed s/CXX=//)
 endif
 
 CXXFLAGS      = -g -Wall -fPIC
@@ -30,18 +30,14 @@ $(addprefix obj/,%.o) : $(addprefix rootio/,%.cc )
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
-ANA00   =    TAna00Event.o TAna00EventDict.o \
-             TGenCand.o TGenCandDict.o \
-             TAnaTrack.o TAnaTrackDict.o \
-             TAnaCand.o TAnaCandDict.o \
-             TAnaVertex.o TAnaVertexDict.o \
-             TAnaJet.o TAnaJetDict.o 
+ANA00   = TAna00Event.o TAna00EventDict.o \
+          TGenCand.o TGenCandDict.o \
+          TAnaTrack.o TAnaTrackDict.o \
+          TAnaCand.o TAnaCandDict.o \
+          TAnaVertex.o TAnaVertexDict.o \
+          TAnaJet.o TAnaJetDict.o 
 
 ANACLASSES = ana.o anaDict.o 
-
-UTIL       = PidTable.o PidTableDict.o \
-             PidData.o PidDataDict.o 
-
 
 # ================================================================================
 all: 
@@ -81,19 +77,6 @@ rootio/TAnaMuonDict.cc: rootio/TAnaMuon.hh
 
 rootio/TGenMuonDict.cc: rootio/TGenMuon.hh 
 	cd rootio && $(ROOTSYS)/bin/rootcint -f TGenMuonDict.cc -c TGenMuon.hh && cd - 
-
-
-# ================================================================================
-util: $(addprefix obj/,$(UTIL))
-# -----------------------------
-	$(CXX) $(SOFLAGS) $(addprefix obj/,$(UTIL)) -o lib/libUtil.so
-
-rootio/PidTableDict.cc: rootio/PidTable.hh
-	cd rootio && $(ROOTSYS)/bin/rootcint -f PidTableDict.cc -c PidTable.hh 
-
-rootio/PidDataDict.cc: rootio/PidData.hh 
-	cd rootio && $(ROOTSYS)/bin/rootcint -f PidDataDict.cc -c PidData.hh 
-
 
 # ======================================================================
 writeA00Event: test/writeA00Event.cc
@@ -146,9 +129,7 @@ runHttReader: test/httReader.hh test/httReader.cc
 
 # ================================================================================
 links:
-	mkdir -p ../../../lib/$(SCRAM_ARCH)
 	cd ../../../lib/$(SCRAM_ARCH)/ && rm -f libAna00.so && ln -s ../../src/AnalysisDataFormats/HeavyFlavorObjects/lib/libAna00.so && cd -
-	cd ../../../lib/$(SCRAM_ARCH)/ && rm -f libUtil.so && ln -s ../../src/AnalysisDataFormats/HeavyFlavorObjects/lib/libUtil.so && cd -
 
 # ================================================================================
 clean:
