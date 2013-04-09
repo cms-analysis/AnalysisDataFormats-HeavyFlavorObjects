@@ -177,6 +177,51 @@ void PidTable::printAll(int i) {
 
 }
 
+// ----------------------------------------------------------------------
+double PidTable::getMean() {
+  int cells(0);
+  double pass(0.), total(0.);
+  double a(0.), wi(0.), w(0.), meanE(0.), meanS(0.), meanU(0.);
+  double tmin(9999.), tmax(-9999.), pmin(9999.), pmax(-9999.);
+  
+  TIter next(fDataVector); PidData *iTable;
+  while ((iTable = (PidData*)next())) {
+    pass  += iTable->getPass();
+    total += iTable->getTot();
+    cells++;
+    if (iTable->getPmin() < pmin) pmin = iTable->getPmin();
+    if (iTable->getPmax() > pmax) pmax = iTable->getPmax();
+    if (iTable->getTmin() < tmin) tmin = iTable->getTmin();
+    if (iTable->getTmax() > tmax) tmax = iTable->getTmax();
+
+    a = iTable->getS();
+    if (a > 1e-8) {
+      wi = 1./(a*a);
+      w     += wi;
+      meanE += wi*iTable->getE();
+      meanS += wi*iTable->getS();
+    }
+  }
+
+  if (w) fMeanEff = meanE / w;
+  if (w) fMeanEffErr  = 1./TMath::Sqrt(w);  // uncertainty of mean efficiency
+  if (w) fMeanErr = meanS / w;              // mean of efficiency uncertainties
+
+  return fMeanEff;
+}
+
+
+// ----------------------------------------------------------------------
+void PidTable::scale(double scaleFactor) {
+  
+  TIter next(fDataVector); PidData *iTable;
+  while ((iTable = (PidData*)next())) {
+    iTable->setPass(scaleFactor*(iTable->getPass()));
+    iTable->setTot(iTable->getTot());
+    iTable->calcEffAndErr();
+  }
+}
+
 
 // ----------------------------------------------------------------------
 void PidTable::print(ostream &OUT) {

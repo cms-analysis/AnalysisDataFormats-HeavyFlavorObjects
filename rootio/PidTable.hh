@@ -57,7 +57,7 @@ public:
   void     compress();
   // output into ascii file
   void dumpToFile(const char *filename = "bla.dat"); 
-
+  void scale(double scaleFactor); 
 
   // -- Utilities
   void     setVerbosity(int t) {fVerbose = t;}
@@ -72,6 +72,8 @@ public:
   void     shiftPmax(double oldMax, double newMax); 
   void     shiftTmax(double oldMax, double newMax); 
   TIter    next() {return TIter(fDataVector);} 
+  
+  double   getMean(); 
   
   TString  getHistName() {return fHistName;}
   TString  getFileName() {return fFileName;}
@@ -186,9 +188,9 @@ private:
   TString fPidTablesDir; 
 
   // -- maximum and minimum efficiency
-  double fMaxEff, fMinEff;
+  double fMaxEff, fMinEff, fMeanEff, fMeanEffErr;
   // -- maximum and minimum efficiency error
-  double fMaxErr, fMinErr;
+  double fMaxErr, fMinErr, fMeanErr;
   // -- SetMinimum and SetMaximum ranges
   double fHistMin, fHistMax;
   // -- validity range
