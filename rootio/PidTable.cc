@@ -657,15 +657,17 @@ PidData* PidTable::getData(double p, double t, double f) {
 // ----------------------------------------------------------------------
 PidData* PidTable::getDataRange(PidData d) {
   PidData *a = new PidData();
+  double eps(1e-6); 
   a->setEffAndErrMode(fMode);
   TIter next(fDataVector); PidData *iTable;
+  if (fVerbose > 1)  cout << "d: " << d.getPmin() << "/" << d.getPmax() << " .. " << d.getTmin() << "/" << d.getTmax() << endl;
   while ((iTable = (PidData*)next())) {
-    if ((d.getPmin() < iTable->getPmax()) && (iTable->getPmin() < d.getPmax())
-	&& (d.getTmin() < iTable->getTmax()) && (iTable->getTmin() < d.getTmax())
-	&& (d.getFmin() < iTable->getFmax()) && (iTable->getFmin() < d.getFmax())
+    if ((d.getPmin() < iTable->getPmax()-eps) && (iTable->getPmin()+eps < d.getPmax())
+	&& (d.getTmin() < iTable->getTmax()-eps) && (iTable->getTmin()+eps < d.getTmax())
+	&& (d.getFmin() < iTable->getFmax()-eps) && (iTable->getFmin()+eps < d.getFmax())
 	) {
       a->merge(iTable);
-      if (fVerbose > 1)  cout << "getDataRange: merging  " << *iTable << endl;
+      if (fVerbose > 1) cout << "getDataRange: merging  " << *iTable << endl;
     }
   }
   return a;
@@ -674,13 +676,14 @@ PidData* PidTable::getDataRange(PidData d) {
 
 // ----------------------------------------------------------------------
 PidData* PidTable::getDataRange(double pmin, double pmax, double tmin, double tmax, double fmin, double fmax) {
+  double eps(1e-6); 
   PidData *a = new PidData(pmin, pmax, tmin, tmax, fmin, fmax);
   a->setEffAndErrMode(fMode);
   TIter next(fDataVector); PidData *iTable;
   while ((iTable = (PidData*)next())) {
-    if ((pmin < iTable->getPmax()) && (iTable->getPmin() < pmax)
-	&& (tmin < iTable->getTmax()) && (iTable->getTmin() < tmax)
-	&& (fmin < iTable->getFmax()) && (iTable->getFmin() < fmax)
+    if ((pmin < iTable->getPmax()-eps) && (iTable->getPmin()+eps < pmax)
+	&& (tmin < iTable->getTmax()-eps) && (iTable->getTmin()+eps < tmax)
+	&& (fmin < iTable->getFmax()-eps) && (iTable->getFmin()+eps < fmax)
 	) {
       a->merge(iTable);
       if (fVerbose > 4)  cout << "getDataRange: merging  " << *iTable << endl;

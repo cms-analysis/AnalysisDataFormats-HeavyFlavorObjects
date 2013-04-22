@@ -19,7 +19,7 @@ JSON::JSON(const char *fname, int verbose) {
   ifstream file(fname);  
   while (getline(file, line)) { 
     jsonFile.push_back(line); 
-    cout<<line<<endl;
+    //    cout<<line<<endl;
   }
 
   string::size_type p1;
