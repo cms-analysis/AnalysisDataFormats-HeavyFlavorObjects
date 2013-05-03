@@ -42,7 +42,7 @@ public:
   // see AN2008_098 "Muon identification in CMS"
   float     fMuonChi2, fMuonZ, fMuonR;
   float     fCaloComp, fSegmComp, fIsolation; 
-  int       fNhitsCSC, fNhitsDT,fNhitsRPC; 
+  int       fNvalidMuonHits, fNhitsCSC, fNhitsDT,fNhitsRPC; 
   int       fNmatchedStations;
   float     fTimeInOut, fTimeInOutE, fTimeOutIn, fTimeOutInE; 
   int       fTimeNdof;

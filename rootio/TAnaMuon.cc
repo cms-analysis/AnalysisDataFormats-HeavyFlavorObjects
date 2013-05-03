@@ -33,6 +33,7 @@ void TAnaMuon::clear() {
   
   fItrkValidFraction = fGtrkNormChi2 = fSegmentComp = fChi2LocalPosition = fChi2LocalMomentum = -999.;
   fNumberOfLostTrkHits = fNumberOfValidTrkHits = -99;
+  fNvalidMuonHits = -99; 
 
   fGtrkProb = -99.;
 
