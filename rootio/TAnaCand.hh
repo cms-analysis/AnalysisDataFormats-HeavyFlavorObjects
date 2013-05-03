@@ -32,7 +32,8 @@ public:
   TAnaVertex  fVtx;
 
   TVector3    fPlab;
-  double      fPtE, fPhiE, fEtaE; 
+  double      fPtE, fPhiE, fEtaE;
+  double      fAlpha;
 
   // -- point of closest approach and related quantities
   double      fMinDoca, fMaxDoca;
