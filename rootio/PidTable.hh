@@ -88,6 +88,7 @@ public:
   // -------------
   // modify table, cell efficiency no longer 'consistent' with cell content
   void contEmptyBins(double cut = 1);
+  void contLowEfficiencyBins(double cut = 0.02);
 
   // modify table, cell efficiency no longer 'consistent' with cell content
   void fitEmptyBins(double cut = 1);

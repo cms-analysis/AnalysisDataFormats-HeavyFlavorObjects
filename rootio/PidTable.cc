@@ -345,8 +345,8 @@ void PidTable::setAxes(int nP, double pmin, double pmax, int nT, double tmin, do
 // ----------------------------------------------------------------------
 void PidTable::fillTable(PidTable &b) {
   PidData *a;
-  TIter next = b.next(); PidData *iTable;
-  while ((iTable = (PidData*)next())) {
+  TIter bnext = b.next(); PidData *iTable;
+  while ((iTable = (PidData*)bnext())) {
     if (fVerbose > 1)  cout << "fillFrom: getting  " << *iTable << endl;
     a = new PidData(*iTable);
     a->setPass(iTable->getPass());
@@ -596,6 +596,36 @@ void PidTable::fitEmptyBins(double cut) {
   }
 }
    
+// ----------------------------------------------------------------------
+void PidTable::contLowEfficiencyBins(double cut) {
+  if (fVerbose > 0) cout << "continue table with contLowEfficiencyBins, cut: " << cut << endl;
+  double oldEff(0.), oldErr(0.);
+  TIter next(fDataVector); PidData *iTable;
+  PidData *begin = (PidData*)fDataVector->First();
+  double plo = begin->getPmax(); 
+  cout << "maximum momentum of first cell: " << plo << endl;
+  while ((iTable = (PidData*)next())) {
+    if ((iTable->getE() < cut) && (iTable != begin)) {
+      cout << "hello: " << iTable->getE() << " . " << oldEff << endl;
+      iTable->print(); 
+      cout << "hello: " << iTable->getE() << " . " << oldEff << endl;
+      iTable->setE(oldEff);
+      iTable->setS(oldErr);
+    }
+    // -- update oldEff only with good statistics values
+    if (iTable->getPctr() > plo) {
+      if ((iTable->getS() < 0.1)) {
+	oldEff = iTable->getE();
+	oldErr = iTable->getS();
+      }
+    } else {
+      // -- when looking at first momentum cell, reset to zero. 
+      oldEff = 0.;
+      oldErr = 0.;
+    }
+  }
+}
+
  
 // ----------------------------------------------------------------------
 void PidTable::contEmptyBins(double cut) {
@@ -616,7 +646,7 @@ void PidTable::contEmptyBins(double cut) {
 	oldErr = iTable->getS();
       }
       // -- when looking at last momentum cell, reset to zero. 
-      if (iTable->getPmax() > 4.9) {
+      if (iTable->getPmax() > 24.9) {
 	oldEff = 0.;
 	oldErr = 0.;
       }
