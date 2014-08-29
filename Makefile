@@ -18,7 +18,7 @@ else
 endif
 
 ifdef SCRAM_ARCH
-  CXX         := $(shell scramv1 tool info cxxcompiler | grep CXX= | sed s/CXX=//)
+  CXX         := $(shell scramv1 tool info gcc-cxxcompiler | grep CXX= | sed s/CXX=//)
 else 
   ifdef CXXCOMPILER
     CXX         := $(CXXCOMPILER)
